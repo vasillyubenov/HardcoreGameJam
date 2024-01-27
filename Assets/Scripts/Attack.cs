@@ -1,108 +1,68 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Attack : MonoBehaviour
 {
     [SerializeField] private UnityEditor.Animations.AnimatorController animationController;
 
-    [Header("Light Attack")]
-    [SerializeField] float windupLightAttack = 0.1f;
-    [SerializeField] float durationLightAttack = 0.1f;
-    [SerializeField] float postLightAttackDelay = 0.1f;
-    [SerializeField] float rangeAttackLight = 10f;
-    [SerializeField] float attackPowerLight = 10f;
-    [SerializeField] CapsuleCollider2D lightAttackCollider;
-    
-    [Header("Heavy Attack")]
-    [SerializeField] float windupHeavyAttack = 0.3f;
-    [SerializeField] float durationHeavyAttack = 0.1f;
-    [SerializeField] float postHeavyAttackDelay = 0.3f;
-    [SerializeField] float rangeAttackHeavy = 30f;
-    [SerializeField] float attackPowerHeavy = 30f;
-    [SerializeField] CapsuleCollider2D heavyAttackCollider;
+    [SerializeField] private HitData lightAttack, heavyAttack;
 
-    private float windupTime = 0;
-    private float postAttackDelay = 0;
-    private float attackDuration;
-    private float attackRange;
-    private float attackPower;
-    private CapsuleCollider2D attackCollider;
-    private float tempAttackDuration;
-    private Vector3 initialColliderPosition;
+    [SerializeField] private PunchCollider punchCollider;
 
-    public void OnUseLightAttack()
+    public delegate void OnHitActivated(HitData args);
+    public event OnHitActivated onHitEvent;
+
+    public delegate void OnBlockActivated(bool arg);
+    public event OnBlockActivated onBlockEvent;
+
+    private bool canAct = true, isBlocking = false;
+
+    public enum AttackType
     {
-        if (!CanUseAttack())
-        {
-            return;
-        }
-
-        Debug.Log("Light attack");
-        attackDuration = durationLightAttack;
-        postAttackDelay = postLightAttackDelay;
-        windupTime = windupLightAttack;
-        attackRange = rangeAttackLight;
-        attackCollider = lightAttackCollider;
-        attackPower = attackPowerLight;
-
-        StartCoroutine(UseAttack());
+        light,
+        heavy
     }
-
-    public void OnUseHeavyAttack()
+    private void SendPunch(AttackType attack)
     {
-        if (!CanUseAttack())
-        {
-            return;
-        }
+        HitData hitData = attack == AttackType.light ? lightAttack : heavyAttack;
 
-        attackDuration = durationHeavyAttack;
-        postAttackDelay = postHeavyAttackDelay;
-        windupTime = windupHeavyAttack;
-        attackRange = rangeAttackHeavy;
-        attackCollider = heavyAttackCollider;
-        attackPower = attackPowerHeavy;
+        onHitEvent.Invoke(hitData);
 
-        StartCoroutine(UseAttack());
+        canAct = false;
+
+        float cooldown = hitData.GetAttackTime();
+        Invoke("ResetCooldown", cooldown);
     }
-
-    private IEnumerator UseAttack()
+    private void Block(bool state)
     {
-        tempAttackDuration = 0;
-        initialColliderPosition = attackCollider.transform.position;
-        yield return new WaitForSeconds(windupTime);
+        isBlocking = state;
 
-        if (!CanUseAttack())
-        {
-            yield break;
-        }        
+        onBlockEvent.Invoke(state);
     }
-
-    private bool CanUseAttack()
+    private void KeyboardTestInput()
     {
-        return windupTime <= 0 || postAttackDelay <= 0;
-    }
-
-    private void Update()
-    {
-        if (windupTime > 0)
+        if (canAct)
         {
-            windupTime -= Time.deltaTime;
-            return;
-        }
+            if (Input.GetKeyDown(KeyCode.R)) Block(true);
+            if (Input.GetKeyUp(KeyCode.R)) Block(false);
 
-        if (attackCollider != null)
-        {
-            tempAttackDuration += Time.deltaTime;
-            Vector3 interpolatedPosition = Vector3.Lerp(attackCollider.transform.position, attackCollider.transform.position + Vector3.right * attackRange, Mathf.Min(tempAttackDuration / attackDuration, 1));
-            attackCollider.transform.position = interpolatedPosition;
-
-            if (tempAttackDuration >= attackDuration)
+            if (!isBlocking)
             {
-                attackCollider.transform.position = initialColliderPosition;
-                attackCollider = null;
-                tempAttackDuration = 0;
+                if (Input.GetKeyDown(KeyCode.Q)) SendPunch(AttackType.light);
+                else if (Input.GetKeyDown(KeyCode.E)) SendPunch(AttackType.heavy);
             }
         }
+    }
+    private void Update()
+    {
+        KeyboardTestInput();
+    }
+
+    private void ResetCooldown()
+    {
+        canAct = true;
     }
 }
