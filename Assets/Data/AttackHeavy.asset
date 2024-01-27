@@ -9,14 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: heavy
-  m_EditorClassIdentifier: Assembly-CSharp::HitData
+  m_Script: {fileID: 11500000, guid: a5b390e9b8e50c14a90696a0f5b9368a, type: 3}
+  m_Name: AttackHeavy
+  m_EditorClassIdentifier: 
   attackType: 1
-  windup: 0.1
+  windup: 0.3
   duration: 0.1
-  recoil: 0.1
-  range: 10
-  knockback: 10
-  damage: 10
-  stunTime: 0.5
+  recoil: 0.3
+  range: 30
+  knockback: 5
+  damage: 30
+  stunTime: 1
