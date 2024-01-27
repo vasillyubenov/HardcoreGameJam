@@ -17,6 +17,6 @@ MonoBehaviour:
   duration: 0.1
   recoil: 0.3
   range: 30
-  knockback: 5
+  knockback: 8
   damage: 30
   stunTime: 1

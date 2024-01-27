@@ -24,9 +24,22 @@ public class CameraScript : MonoBehaviour
 
     private Vector3 shakeOffset, shakeInertia;
 
+    private float timeScaleTarget = 1;
+
+    public void ShakeCamera(float x)
+    {
+        shakeOffset = new Vector3(x, shakeOffset.y, 0);
+    }
     public void ShakeCamera(Vector2 forceVector)
     {
         shakeOffset = new Vector3(forceVector.x, forceVector.y, 0);
+    }
+    public void SlowMotion(float time)
+    {
+        Time.timeScale = timeScaleTarget = 0.05f;
+
+        CancelInvoke("CancelSlowMotion");
+        Invoke("CancelSlowMotion", time);
     }
     private void LateUpdate()
     {
@@ -36,6 +49,7 @@ public class CameraScript : MonoBehaviour
         MoveCamera();
         ZoomCamera();
         ShakeAttenuation();
+        SlowMotionEffect();
     }
     private void MoveCamera()
     {
@@ -57,6 +71,16 @@ public class CameraScript : MonoBehaviour
         Vector3 shakeVector = -shakeOffset / shakeAttenuation;
 
         shakeOffset = Vector3.Lerp(shakeInertia, shakeVector, Time.deltaTime * shakeSpeed);
+    }
+    private void SlowMotionEffect()
+    {
+        Time.timeScale = Mathf.Lerp(Time.timeScale, timeScaleTarget, Time.deltaTime * 4f);
+        Time.fixedDeltaTime = Time.timeScale * 0.02f;
+    }
+    public void CancelSlowMotion()
+    {
+        CancelInvoke("CancelSlowMotion");
+        timeScaleTarget = 1;
     }
     private float GetWidth()
     {

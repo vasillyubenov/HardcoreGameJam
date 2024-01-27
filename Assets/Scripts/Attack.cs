@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class Attack : MonoBehaviour
@@ -13,7 +14,10 @@ public class Attack : MonoBehaviour
     public delegate void OnHitActivated(HitData args);
     public event OnHitActivated onHitEvent;
 
-    private bool canAct = true;
+    public delegate void OnBlockActivated(bool arg);
+    public event OnBlockActivated onBlockEvent;
+
+    private bool canAct = true, isBlocking = false;
 
     public enum AttackType
     {
@@ -31,12 +35,24 @@ public class Attack : MonoBehaviour
         float cooldown = hitData.GetAttackTime();
         Invoke("ResetCooldown", cooldown);
     }
+    private void Block(bool state)
+    {
+        isBlocking = state;
+
+        onBlockEvent.Invoke(state);
+    }
     private void KeyboardTestInput()
     {
         if (canAct)
         {
-            if (Input.GetKeyDown(KeyCode.Q)) SendPunch(AttackType.light);
-            else if (Input.GetKeyDown(KeyCode.E)) SendPunch(AttackType.heavy);
+            if (Input.GetKeyDown(KeyCode.R)) Block(true);
+            if (Input.GetKeyUp(KeyCode.R)) Block(false);
+
+            if (!isBlocking)
+            {
+                if (Input.GetKeyDown(KeyCode.Q)) SendPunch(AttackType.light);
+                else if (Input.GetKeyDown(KeyCode.E)) SendPunch(AttackType.heavy);
+            }
         }
     }
     private void Update()

@@ -9,6 +9,8 @@ public class PunchCollider : MonoBehaviour
 
     [SerializeField] private Vector2 hitOffset;
 
+    [SerializeField] private int teamTag;
+
     private bool activeHit = false, hasHit = false;
 
     private HitData hitData;
@@ -47,7 +49,7 @@ public class PunchCollider : MonoBehaviour
 
             if (coll.TryGetComponent(out hit))
             {
-                hit.GetHit(hitData.attackType, hitData.knockback * direction, hitData.damage, hitData.stunTime);
+                hit.GetHit(hitData.attackType, hitData.knockback * direction, hitData.damage, hitData.stunTime, teamTag);
 
                 hasHit = true;
             }
@@ -56,5 +58,5 @@ public class PunchCollider : MonoBehaviour
 }
 public interface IPunchable
 {
-    public void GetHit(Attack.AttackType type, float knockback, float damage, float stun);
+    public void GetHit(Attack.AttackType type, float knockback, float damage, float stun, int teamTag);
 }
