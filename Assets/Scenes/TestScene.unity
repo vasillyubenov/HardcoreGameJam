@@ -190,6 +190,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1692102342}
+        m_TargetAssemblyTypeName: PostProcessingEffects, Assembly-CSharp
+        m_MethodName: VignetteEffect
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0.04
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   cameraEffect: {fileID: 873357884}
   healthSystem: {fileID: 21606666}
   teamTag: 1
@@ -342,7 +354,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  maxHealth: 100
+  maxHealth: 50
   health: 0
   immune: 0
   controller: {fileID: 0}
@@ -695,7 +707,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -935,7 +947,6 @@ MonoBehaviour:
   lightAttack: {fileID: 11400000, guid: 0f417da265669484297ad2787c2be62d, type: 2}
   heavyAttack: {fileID: 11400000, guid: 05644345767a58a428116f5f816892d9, type: 2}
   punchCollider: {fileID: 548836077}
-  healthSystem: {fileID: 1295374365}
 --- !u!50 &1295374362
 Rigidbody2D:
   serializedVersion: 4
@@ -1046,7 +1057,7 @@ MonoBehaviour:
   maxHealth: 100
   health: 0
   immune: 0
-  controller: {fileID: 0}
+  controller: {fileID: 1295374359}
 --- !u!114 &1295374366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1260,6 +1271,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1692102341}
   - component: {fileID: 1692102340}
+  - component: {fileID: 1692102342}
   m_Layer: 0
   m_Name: PP
   m_TagString: Untagged
@@ -1299,6 +1311,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1692102342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1692102339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3fab7863ee5824e95c67aa438e3d47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1842864157
 GameObject:
   m_ObjectHideFlags: 0
