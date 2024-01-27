@@ -6,103 +6,68 @@ public class Attack : MonoBehaviour
 {
     [SerializeField] private UnityEditor.Animations.AnimatorController animationController;
 
-    [Header("Light Attack")]
-    [SerializeField] float windupLightAttack = 0.1f;
-    [SerializeField] float durationLightAttack = 0.1f;
-    [SerializeField] float postLightAttackDelay = 0.1f;
-    [SerializeField] float rangeAttackLight = 10f;
-    [SerializeField] float attackPowerLight = 10f;
-    [SerializeField] CapsuleCollider2D lightAttackCollider;
-    
-    [Header("Heavy Attack")]
-    [SerializeField] float windupHeavyAttack = 0.3f;
-    [SerializeField] float durationHeavyAttack = 0.1f;
-    [SerializeField] float postHeavyAttackDelay = 0.3f;
-    [SerializeField] float rangeAttackHeavy = 30f;
-    [SerializeField] float attackPowerHeavy = 30f;
-    [SerializeField] CapsuleCollider2D heavyAttackCollider;
+    [SerializeField] private HitData lightAttack, heavyAttack;
 
-    private float windupTime = 0;
-    private float postAttackDelay = 0;
-    private float attackDuration;
-    private float attackRange;
-    private float attackPower;
-    private CapsuleCollider2D attackCollider;
-    private float tempAttackDuration;
-    private Vector3 initialColliderPosition;
+    [SerializeField] private PunchCollider punchCollider;
 
-    public void OnUseLightAttack()
+    public delegate void OnHitActivated(HitData args);
+    public event OnHitActivated onHitEvent;
+
+    private bool canAct = true;
+
+    public enum AttackType
     {
-        if (!CanUseAttack())
+        light,
+        heavy
+    }
+    private void SendPunch(AttackType attack)
+    {
+        HitData hitData = attack == AttackType.light ? lightAttack : heavyAttack;
+
+        onHitEvent.Invoke(hitData);
+
+        canAct = false;
+
+        float cooldown = hitData.GetAttackTime();
+        Invoke("ResetCooldown", cooldown);
+    }
+    private void KeyboardTestInput()
+    {
+        if (canAct)
         {
-            return;
+            if (Input.GetKeyDown(KeyCode.Q)) SendPunch(AttackType.light);
+            else if (Input.GetKeyDown(KeyCode.E)) SendPunch(AttackType.heavy);
         }
-
-        Debug.Log("Light attack");
-        attackDuration = durationLightAttack;
-        postAttackDelay = postLightAttackDelay;
-        windupTime = windupLightAttack;
-        attackRange = rangeAttackLight;
-        attackCollider = lightAttackCollider;
-        attackPower = attackPowerLight;
-
-        StartCoroutine(UseAttack());
     }
-
-    public void OnUseHeavyAttack()
-    {
-        if (!CanUseAttack())
-        {
-            return;
-        }
-
-        attackDuration = durationHeavyAttack;
-        postAttackDelay = postHeavyAttackDelay;
-        windupTime = windupHeavyAttack;
-        attackRange = rangeAttackHeavy;
-        attackCollider = heavyAttackCollider;
-        attackPower = attackPowerHeavy;
-
-        StartCoroutine(UseAttack());
-    }
-
-    private IEnumerator UseAttack()
-    {
-        tempAttackDuration = 0;
-        initialColliderPosition = attackCollider.transform.position;
-        yield return new WaitForSeconds(windupTime);
-
-        if (!CanUseAttack())
-        {
-            yield break;
-        }        
-    }
-
-    private bool CanUseAttack()
-    {
-        return windupTime <= 0 || postAttackDelay <= 0;
-    }
-
     private void Update()
     {
-        if (windupTime > 0)
-        {
-            windupTime -= Time.deltaTime;
-            return;
-        }
+        KeyboardTestInput();
+    }
 
-        if (attackCollider != null)
-        {
-            tempAttackDuration += Time.deltaTime;
-            Vector3 interpolatedPosition = Vector3.Lerp(attackCollider.transform.position, attackCollider.transform.position + Vector3.right * attackRange, Mathf.Min(tempAttackDuration / attackDuration, 1));
-            attackCollider.transform.position = interpolatedPosition;
+    private void ResetCooldown()
+    {
+        canAct = true;
+    }
+}
 
-            if (tempAttackDuration >= attackDuration)
-            {
-                attackCollider.transform.position = initialColliderPosition;
-                attackCollider = null;
-                tempAttackDuration = 0;
-            }
-        }
+[CreateAssetMenu(fileName = "New Hit", menuName = "Create New Hit Properties")]
+public class HitData : ScriptableObject
+{
+    public Attack.AttackType attackType = Attack.AttackType.light;
+
+    [Header("Time Properties")]
+    public float windup = 0.1f;
+    public float duration = 0.1f;
+    public float recoil = 0.1f;
+
+    [Header("Impact Properties")]
+    public float range = 10f;
+    public float knockback = 10f;
+    public float damage = 10f;
+    public float stunTime = 0.5f;
+
+    public float GetAttackTime()
+    {
+        return windup + duration + recoil;
     }
 }
