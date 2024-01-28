@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private Transform playerSpawn1, playerSpawn2;
     [SerializeField] private Health player1Health, player2Health;
     [SerializeField] private int pointsToWin;
+    [SerializeField] private GameObject playerWinLog1, playerWinLog2;
+
+    [SerializeField] private UnityEvent onGameEnd;
 
     private int player1Score;
     private int player2Score;
@@ -40,7 +45,18 @@ public class GameManager : MonoBehaviour
 
     public void PlayCelebrationSequence(int playerWon)
     {
+        if (playerWon == 1) playerWinLog1.SetActive(true);
+        else playerWinLog2.SetActive(true);
 
+        onGameEnd.Invoke();
+
+        Invoke("ReloadScene", 5f);
+    }
+
+    private void ReloadScene()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
     }
 
     public void Respawn(bool isPlayer1)
