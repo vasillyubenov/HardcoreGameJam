@@ -33,4 +33,12 @@ public class Health : MonoBehaviour
     {
         health = maxHealth;
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.transform.tag == "DeadZone")
+        {
+            TakeDamage(maxHealth);
+        }
+    }
 }
