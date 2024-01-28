@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Menu_Controller : MonoBehaviour {
@@ -15,6 +16,8 @@ public class Menu_Controller : MonoBehaviour {
 	public AudioClip _audioClip;
 	[Tooltip("_audioSource defines the Audio Source component in this scene.")]
 	public AudioSource _audioSource;
+
+	public int playSceneIndex = 1;
 	
 	//The private variable 'scene' defined below is used for example/development purposes.
 	//It is used in correlation with the Escape_Menu script to return to last scene on key press.
@@ -38,8 +41,8 @@ public class Menu_Controller : MonoBehaviour {
 	public void PlayGame () {
 		_audioSource.PlayOneShot(_audioClip);
 		PlayerPrefs.SetString("_LastScene", scene.name);
-		UnityEngine.SceneManagement.SceneManager.LoadScene(_sceneToLoadOnPlay);
-	}
+        SceneManager.LoadScene(playSceneIndex);
+    }
 	
 	public void Mute () {
 		_audioSource.PlayOneShot(_audioClip);

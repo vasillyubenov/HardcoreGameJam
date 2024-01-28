@@ -29,4 +29,8 @@ public class Health : MonoBehaviour
 
         Debug.Log(state);
     }
+    public void Revive()
+    {
+        health = maxHealth;
+    }
 }

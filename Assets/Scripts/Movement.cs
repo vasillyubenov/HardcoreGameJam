@@ -14,7 +14,9 @@ public class Movement : MonoBehaviour
     [SerializeField] private float dashDuration = 0.5f;
     [SerializeField] private float dashCooldown = 1f;
     [SerializeField] private ParticleSystem dashParticles;
-    
+    [SerializeField] private Animator animator;
+    [SerializeField] private AudioSource walkingAudioSource;
+
     private Vector2 input;
     private Rigidbody2D playerRB;
     private bool isGrounded;
@@ -23,15 +25,19 @@ public class Movement : MonoBehaviour
     private float dashTimePassed = 0;
     private bool isDashing;
     private float cooldownTimeDash;
+    private bool isStunned;
 
     private void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
         dashParticles.gameObject.SetActive(false);
     }
-
-    public void Move(InputAction.CallbackContext context)
+    public void Stun(bool state)
     {
+        isStunned = state;
+    }
+    public void Move(InputAction.CallbackContext context)
+    { 
         input = context.ReadValue<Vector2>();
         if (input == Vector2.zero)
         {
@@ -44,6 +50,12 @@ public class Movement : MonoBehaviour
         if (input != Vector2.zero)
         {
             Move();
+        }
+        else
+        {
+            animator.SetBool("isWalking", false);
+            Debug.Log("Stopping");
+            SoundManager.Instance.StopMove(walkingAudioSource);
         }
 
         if (dashTimePassed > 0)
@@ -98,12 +110,26 @@ public class Movement : MonoBehaviour
             return;
         }
 
+        if (isStunned)
+        {
+            return;
+        }
+
+        animator.SetBool("isWalking", true);
+        SoundManager.Instance.PlayMove(walkingAudioSource);
+
         playerRB.velocity = new Vector2(input.x * speed, playerRB.velocity.y);
         directionX = Mathf.Sign(input.x);
+        transform.localScale = new Vector3(directionX, 1, 1);
     }
 
     public void Jump(InputAction.CallbackContext context)
     {
+        if (isStunned)
+        {
+            return;
+        }
+
         if (!context.started && context.performed)
         {
             return;
@@ -138,11 +164,19 @@ public class Movement : MonoBehaviour
             canDoubleJump = false;
         }
 
+        animator.SetTrigger("jump");
+        SoundManager.Instance.PlayJump();
+
         playerRB.AddForce(Vector2.up * jumpForce);
     }
 
     public void Dash(InputAction.CallbackContext context)
     {
+        if (isStunned)
+        {
+            return;
+        }
+
         if (!context.started && context.performed)
         {
             return;
@@ -161,6 +195,9 @@ public class Movement : MonoBehaviour
         {
             return;
         }
+
+        animator.SetTrigger("dash");
+        SoundManager.Instance.PlayDash();
 
         cooldownTimeDash = dashCooldown;
         isDashing = true;

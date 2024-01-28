@@ -5,10 +5,14 @@ using UnityEngine.Events;
 
 public class Hitbox : MonoBehaviour, IPunchable
 {
-    [SerializeField] private UnityEvent onLightHit, onHeavyHit;
+    [SerializeField] private UnityEvent onLightHit, onHeavyHit, onHit;
 
     [SerializeField] private CameraScript cameraEffect;
     [SerializeField] private Health healthSystem;
+
+    [SerializeField] private Movement movement;
+    [SerializeField] private Attack attack;
+    [SerializeField] private PunchCollider punch;
 
     [SerializeField] private int teamTag;
 
@@ -24,12 +28,16 @@ public class Hitbox : MonoBehaviour, IPunchable
             }
             else
             {
+                onHit.Invoke();
+
                 if (attack == Attack.AttackType.light) onLightHit.Invoke();
                 else onHeavyHit.Invoke();
 
                 GetComponent<Rigidbody2D>().velocity = new Vector2(knockback, Mathf.Abs(knockback));
 
                 healthSystem.TakeDamage(damage);
+
+                Stun(stun);
             }
 
             if (cameraEffect != null) CameraEffects(knockback / 10f);
@@ -38,5 +46,18 @@ public class Hitbox : MonoBehaviour, IPunchable
     private void CameraEffects(float shake)
     {
         cameraEffect.ShakeCamera(shake);
+    }
+    private void Stun(float stun)
+    {
+        movement.Stun(true);
+        attack.Stun(true);
+        punch.CancelHit();
+
+        Invoke("StunExit", stun);
+    }
+    private void StunExit()
+    {
+        movement.Stun(false);
+        attack.Stun(false);
     }
 }

@@ -2,7 +2,7 @@
     "name": "MakeMeLaugh 1",
     "maps": [
         {
-            "name": "Player",
+            "name": "Player2",
             "id": "8e43c24d-0e03-4693-b527-4a0bc1f66455",
             "actions": [
                 {
@@ -27,6 +27,33 @@
                     "name": "Player 2 Dash",
                     "type": "Button",
                     "id": "5a2f790d-3f49-47af-9cbd-dc44ab1eef12",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Player Light Attack",
+                    "type": "Button",
+                    "id": "15850227-070f-4b82-b543-b7b3585f2ac6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Player Heavy Attack",
+                    "type": "Button",
+                    "id": "095071d2-6e40-4cd6-949f-63772fbf9309",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Player Block",
+                    "type": "Button",
+                    "id": "7374fd54-7340-4a86-bc98-601c62cfab9c",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -86,6 +113,39 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Player 2 Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "89203540-1a81-4f56-8d5c-423efbc0bd09",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Player Light Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "83927ee4-44e0-4493-9f5f-a6fc56143496",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Player Heavy Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "45a7a154-e2a0-4e46-a934-09b059fb959d",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Player Block",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

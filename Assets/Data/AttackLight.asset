@@ -19,4 +19,4 @@ MonoBehaviour:
   range: 10
   knockback: 1
   damage: 10
-  stunTime: 0.3
+  stunTime: 0.1

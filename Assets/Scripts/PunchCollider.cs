@@ -15,6 +15,13 @@ public class PunchCollider : MonoBehaviour
 
     private HitData hitData;
 
+    public void CancelHit()
+    {
+        StopCoroutine(HitCoroutine(hitData));
+
+        hasHit = true;
+        activeHit = false;
+    }
     private void Start()
     {
         controller.onHitEvent += PerformPunch; 
